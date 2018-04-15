@@ -24,6 +24,9 @@ public class Technician {
         String EXCHANGE_NAME2 = "exchange2";
         channel.exchangeDeclare(EXCHANGE_NAME2, BuiltinExchangeType.TOPIC);
 
+        String EXCHANGE_NAME3 = "exchange3";
+        channel.exchangeDeclare(EXCHANGE_NAME3, BuiltinExchangeType.FANOUT);
+
         // queue & bind
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter technician specializations: ");
@@ -34,12 +37,16 @@ public class Technician {
 
         String queueName1 = specalizationsArray[0];
         String queueName2 = specalizationsArray[1];
+        String queueName3 = channel.queueDeclare().getQueue();
 
         channel.queueDeclare(queueName1, false, false, false, null);
-        channel.queueBind(queueName1, EXCHANGE_NAME, queueName1+".*");
+        channel.queueBind(queueName1, EXCHANGE_NAME, queueName1 + ".*");
 
         channel.queueDeclare(queueName2, false, false, false, null);
-        channel.queueBind(queueName2, EXCHANGE_NAME, queueName2+".*");
+        channel.queueBind(queueName2, EXCHANGE_NAME, queueName2 + ".*");
+
+        //channel.queueDeclare(queueName3, false, false, false, null);
+        channel.queueBind(queueName3, EXCHANGE_NAME3, "");
 
         System.out.println("created queue: " + queueName1);
         System.out.println("created queue: " + queueName2);
@@ -52,14 +59,16 @@ public class Technician {
                 System.out.println("Received: " + message);
 
                 try {
-                    Thread.sleep( 1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                message=message+" done";
+                message = message + " done";
                 // publish
-                channel.basicPublish(EXCHANGE_NAME2, properties.getReplyTo(), null, message.getBytes("UTF-8"));
-                System.out.println("Sent: " + message);
+                if (properties.getReplyTo() != null) {
+                    channel.basicPublish(EXCHANGE_NAME2, properties.getReplyTo(), null, message.getBytes("UTF-8"));
+                    System.out.println("Sent: " + message);
+                }
             }
         };
 
@@ -68,8 +77,7 @@ public class Technician {
 
         channel.basicConsume(queueName1, true, consumer);
         channel.basicConsume(queueName2, true, consumer);
-
-
+        channel.basicConsume(queueName3, true, consumer);
 
 
     }

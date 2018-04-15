@@ -29,9 +29,19 @@ public class Doctor {
         String EXCHANGE_NAME2 = "exchange2";
         channel.exchangeDeclare(EXCHANGE_NAME2, BuiltinExchangeType.TOPIC);
 
-        String queueName = "queue3";
+        String EXCHANGE_NAME3 = "exchange3";
+        channel.exchangeDeclare(EXCHANGE_NAME3, BuiltinExchangeType.FANOUT);
+
+        String queueName = "queueDoc";
+        String queueName3=channel.queueDeclare().getQueue();
+
         channel.queueDeclare(queueName, false, false, false, null);
         channel.queueBind(queueName, EXCHANGE_NAME2, uuid);
+
+//        channel.queueDeclare(queueName3, false, false, false, null);
+        channel.queueBind(queueName3, EXCHANGE_NAME3, "");
+
+
 
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
@@ -45,6 +55,8 @@ public class Doctor {
 
         while (true) {
 
+            channel.basicConsume(queueName, true, consumer);
+            channel.basicConsume(queueName3, true, consumer);
             // read msg
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Enter type or exit: ");
@@ -61,7 +73,8 @@ public class Doctor {
             channel.basicPublish(EXCHANGE_NAME, routingKey+"."+patient, p, message.getBytes("UTF-8"));
             System.out.println("Sent: " + message);
 
-            channel.basicConsume(queueName, true, consumer);
+
+
         }
     }
 }
