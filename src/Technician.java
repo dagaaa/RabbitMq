@@ -56,8 +56,9 @@ public class Technician {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                message=message+" done";
                 // publish
-                channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
+                channel.basicPublish(EXCHANGE_NAME2, properties.getReplyTo(), null, message.getBytes("UTF-8"));
                 System.out.println("Sent: " + message);
             }
         };
