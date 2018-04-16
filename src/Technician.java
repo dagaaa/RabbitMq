@@ -33,7 +33,6 @@ public class Technician {
         String specalizations = br.readLine();
         String[] specalizationsArray = specalizations.split(" ");
 
-//        String queueName = channel.queueDeclare().getQueue();
 
         String queueName1 = specalizationsArray[0];
         String queueName2 = specalizationsArray[1];

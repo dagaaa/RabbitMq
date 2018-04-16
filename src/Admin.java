@@ -47,7 +47,6 @@ public class Admin {
         };
 
 
-
         while (true) {
 
             channel.basicConsume(queueName, true, consumer);
@@ -63,12 +62,10 @@ public class Admin {
 
             // publish
             channel.basicPublish(EXCHANGE_NAME3, "", null, info.getBytes("UTF-8"));
-            System.out.println("Sent: " +info);
-
+            System.out.println("Sent: " + info);
 
 
         }
-
 
 
     }

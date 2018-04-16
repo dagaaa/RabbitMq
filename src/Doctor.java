@@ -32,10 +32,10 @@ public class Doctor {
         String EXCHANGE_NAME3 = "exchange3";
         channel.exchangeDeclare(EXCHANGE_NAME3, BuiltinExchangeType.FANOUT);
 
-        String queueName = "queueDoc";
+        String queueName = channel.queueDeclare().getQueue();
         String queueName3=channel.queueDeclare().getQueue();
 
-        channel.queueDeclare(queueName, false, false, false, null);
+    //    channel.queueDeclare(queueName, false, false, false, null);
         channel.queueBind(queueName, EXCHANGE_NAME2, uuid);
 
 //        channel.queueDeclare(queueName3, false, false, false, null);
@@ -57,6 +57,7 @@ public class Doctor {
 
             channel.basicConsume(queueName, true, consumer);
             channel.basicConsume(queueName3, true, consumer);
+
             // read msg
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Enter type or exit: ");
